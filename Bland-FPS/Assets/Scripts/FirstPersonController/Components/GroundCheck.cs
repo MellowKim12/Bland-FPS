@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class GroundCheck : MonoBehaviour
@@ -18,6 +19,7 @@ public class GroundCheck : MonoBehaviour
 
     private void LateUpdate()
     {
+        // netcode band-aid patch
         bool isGroundedNow = Physics.Raycast(RaycastOrigin, Vector3.down, distanceThreshold * 2);
 
         if (isGroundedNow && !isGrounded)

@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Crouch : MonoBehaviour
+public class Crouch : NetworkBehaviour
 {
     public KeyCode key = KeyCode.LeftControl;
 
@@ -36,6 +37,9 @@ public class Crouch : MonoBehaviour
 
     private void LateUpdate()
     {
+        // netcode band-aid patch
+        if (!IsOwner) return;
+
         if (Input.GetKey(key))
         {
             if (headToLower)
@@ -82,16 +86,17 @@ public class Crouch : MonoBehaviour
                 {
                     headToLower.localPosition = new Vector3(headToLower.localPosition.x, defaultHeadYLocalPosition.Value, headToLower.localPosition.z);
                 }
-            }
-            if (colliderToLower)
-            {
-                colliderToLower.height = defaultColliderHeight.Value;
-                colliderToLower.center = Vector3.up * colliderToLower.height * 0.5f;
-            }
 
-            IsCrouched = false;
-            SetSpeedOverrideActive(false);
-            CrouchEnd?.Invoke();
+                if (colliderToLower)
+                {
+                    colliderToLower.height = defaultColliderHeight.Value;
+                    colliderToLower.center = Vector3.up * colliderToLower.height * 0.5f;
+                }
+
+                IsCrouched = false;
+                SetSpeedOverrideActive(false);
+                CrouchEnd?.Invoke();
+            }
         }
     }
 

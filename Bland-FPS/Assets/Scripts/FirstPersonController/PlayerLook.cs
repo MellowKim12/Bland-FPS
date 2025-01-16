@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerLook : MonoBehaviour
+public class PlayerLook : NetworkBehaviour
 {
     [SerializeField]
     Transform player;
+
     public float sensitivity = 2;
     public float smoothing = 1.5f;
 
@@ -17,13 +19,22 @@ public class PlayerLook : MonoBehaviour
         player = GetComponentInParent<PlayerMove>().transform;
     }
 
-    void Start()
+    private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    private void Start()
+    {
+        if (IsLocalPlayer)
+            GetComponent<Camera>().enabled = true;
+    }
+
     void Update()
     {
+        // netcode band-aid patch
+        if (!IsOwner) return;
+
         Vector2 mouseDelta = new Vector2(Input.GetAxisRaw("Mouse X"), Input.GetAxisRaw("Mouse Y"));
         Vector2 rawFrameVelocity = Vector2.Scale(mouseDelta, Vector2.one * sensitivity);
         frameVelocity = Vector2.Lerp(frameVelocity, rawFrameVelocity, 1 / smoothing);

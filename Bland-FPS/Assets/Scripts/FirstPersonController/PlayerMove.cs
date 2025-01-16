@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerMove : NetworkBehaviour
 {
     public float speed = 5;
 
@@ -15,6 +16,10 @@ public class PlayerMove : MonoBehaviour
     Rigidbody rb;
     public List<System.Func<float>> speedOverrides = new List<System.Func<float>>();
 
+
+    // Network Data Transfer
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -22,6 +27,9 @@ public class PlayerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // netcode band-aid patch
+        if (!IsOwner) return;
+
         IsRunning = canRun && Input.GetKey(runningKey);
 
         float targetMovingSpeed = IsRunning ? runSpeed : speed;
