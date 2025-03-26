@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,6 +16,8 @@ public class PlayerLook : NetworkBehaviour
     Vector2 velocity;
     Vector2 frameVelocity;
 
+    private bool setCam = false;
+
     private void Reset()
     {
         player = GetComponentInParent<PlayerMove>().transform;
@@ -21,13 +25,27 @@ public class PlayerLook : NetworkBehaviour
 
     private void Awake()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+
     }
 
-    private void Start()
+    public void ActivateLocalCam(GameObject playerID)
     {
-        if (IsLocalPlayer)
+        /*
+        Debug.Log("meow?");
+        if (OwnerClientId == playerID.GetComponent<NetworkObject>().OwnerClientId && !setCam)
+        {
+
+        }
+        else
+            Debug.Log("Thats not your purse!"); */
+    }
+    public override void OnNetworkSpawn()
+    {
+        Debug.Log("meow?");
+        if (IsOwner)
             GetComponent<Camera>().enabled = true;
+        else
+            GetComponent<Camera>().enabled = false;
     }
 
     void Update()

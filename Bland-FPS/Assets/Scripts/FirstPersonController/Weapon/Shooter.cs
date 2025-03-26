@@ -1,12 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Animator))]
-public class Shooter : MonoBehaviour
+public class Shooter : NetworkBehaviour
 {
     [SerializeField]
-    private bool AddBulletSpread = true;
+    private bool AddBulletSpread = false;
     [SerializeField]
     private Vector3 BulletSpreadVariance = new Vector3(0.1f, 0.1f, 0.1f);
     [SerializeField]
@@ -23,6 +25,8 @@ public class Shooter : MonoBehaviour
     private LayerMask Mask;
     [SerializeField]
     private float BulletSpeed = 100;
+
+    
 
     private Animator Animator;
     private float LastShootTime;
@@ -46,11 +50,10 @@ public class Shooter : MonoBehaviour
             if (Physics.Raycast(BulletSpawnPoint.position, direction, out RaycastHit hit, float.MaxValue, Mask))
             {
                 TrailRenderer trail = Instantiate(BulletTrail, BulletSpawnPoint.position, Quaternion.identity);
-
+                //trail.GetComponent<NetworkObject>().Spawn();
                 Debug.Log("Meow");
 
-
-                if (hit.collider.gameObject.tag == "Enemy")
+                if (hit.collider.gameObject.tag == "Player")
                 {
                     Debug.Log("hit a payer and did damage");
                     hit.collider.gameObject.GetComponent<PlayerHealth>().Damage(1);
@@ -65,6 +68,7 @@ public class Shooter : MonoBehaviour
             else
             {
                 TrailRenderer trail = Instantiate(BulletTrail, BulletSpawnPoint.position, Quaternion.identity);
+                
 
                 StartCoroutine(SpawnTrail(trail, BulletSpawnPoint.position + GetDirection() * 100, Vector3.zero, false));
 
@@ -75,7 +79,8 @@ public class Shooter : MonoBehaviour
 
     private Vector3 GetDirection()
     {
-        Vector3 direction = transform.forward;
+        Vector3 direction = this.gameObject.transform.forward;
+        Debug.Log(direction);
 
         if (AddBulletSpread)
         {
@@ -111,9 +116,32 @@ public class Shooter : MonoBehaviour
         Trail.transform.position = HitPoint;
         if (MadeImpact)
         {
-            Instantiate(ImpactParticleSystem, HitPoint, Quaternion.LookRotation(HitNormal));
+            InstantiateHitParticleServerRpc(HitPoint, HitNormal);
+            //ParticleSystem trail = Instantiate(ImpactParticleSystem, HitPoint, Quaternion.LookRotation(HitNormal));
+            //trail.GetComponent<NetworkObject>().Spawn();
         }
 
+        //DestroyParticlesServerRpc(Trail.gameObject);
         Destroy(Trail.gameObject, Trail.time);
     }
+
+    [Rpc(SendTo.Everyone)]
+    private void InstantiateHitParticleServerRpc(Vector3 HitPoint, Vector3 HitNormal)
+    {
+        ParticleSystem trail = Instantiate(ImpactParticleSystem, HitPoint, Quaternion.LookRotation(HitNormal));
+        //trail.GetComponent<NetworkObject>().Spawn();
+    }
+
+    /*
+    [ServerRpc(RequireOwnership = false)]
+    private void DestroyParticlesServerRpc()
+    {
+
+        if (trail.TryGet(out NetworkObject trailObject))
+            Debug.Log("Error deleting Object");
+        trailObject.GetComponent<NetworkObject>().Despawn();
+        //trail.GetComponent<NetworkObject>().Despawn();
+        Destroy(trailObject, trailObject.GetComponent<TrailRenderer>().time);
+    }*/
+
 }

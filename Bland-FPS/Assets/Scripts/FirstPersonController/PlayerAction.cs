@@ -9,33 +9,38 @@ public class PlayerAction : NetworkBehaviour
     [SerializeField]
     private Shooter shooter;
 
+    [SerializeField]
+    private int hp = 5;
 
-
-    private void FixedUpdate()
+    private void Update()
     {
         // netcode band-aid patch
-        if (!IsOwner) return;
+        if (!IsOwner)
+        {
+            //Debug.Log("NOT THE OWNER");
+            return;
+        }
+       
 
         if (Input.GetMouseButton(0) == true)
         {
-            OnShoot();
+            ShootServerRpc();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            ManualPause();
-        }
     }
 
-    private void OnShoot()
+    [ServerRpc]
+    private void ShootServerRpc()
     {
         Debug.Log("Shooting");
         shooter.Shoot();
     }
 
-    private void ManualPause()
+
+
+    public void DealDamage()
     {
-        Cursor.lockState = CursorLockMode.None;
+        this.hp = hp - 1;
     }
 
 }
