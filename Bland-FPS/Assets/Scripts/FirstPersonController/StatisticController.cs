@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class StatisticController : MonoBehaviour
+public class StatisticController : NetworkBehaviour
 {
     [SerializeField]
     private LayerMask Mask;
@@ -22,14 +23,22 @@ public class StatisticController : MonoBehaviour
         
     private void FixedUpdate()
     {
+
+    }
+
+    // function to check whether or not a player is tracking players through walls
+    private void IllegalTraceCheck()
+    {
         if (Physics.Raycast(SpawnPoint.position, Direction.forward, out RaycastHit hit, float.MaxValue, Mask))
         {
-            if (hit.collider.gameObject.tag == "Enemy")
+            if (hit.collider.gameObject.tag == "Enemy" && !(hit.collider.gameObject.GetComponent<MeshRenderer>().isVisible))
             {
                 Debug.Log("tracking a player");
                 TrackTime += Time.time;
             }
         }
     }
+
+
 
 }

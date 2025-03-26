@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerAudio : MonoBehaviour
+public class PlayerAudio : NetworkBehaviour
 {
     public PlayerMove player;
     public GroundCheck groundCheck;
@@ -60,6 +61,9 @@ public class PlayerAudio : MonoBehaviour
 
     void FixedUpdate()
     {
+        // netcode band-aid patch
+        if (!IsOwner) return;
+
         // Play moving audio if character is on ground and moving
         float velocity = Vector3.Distance(CurrentPlayerPosition, lastPlayerPosition);
         if ( velocity >= velocityThreshold && groundCheck && groundCheck.isGrounded)

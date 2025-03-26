@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using Unity.Netcode;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class Zoom : MonoBehaviour
+public class Zoom : NetworkBehaviour
 {
     Camera camera;
     public float FOV = 90;
@@ -23,6 +25,9 @@ public class Zoom : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // netcode band-aid patch
+        if (!IsOwner) return;
+
         // update currentZoom and Camera's fieldOfView
         currentZoom += Input.mouseScrollDelta.y * sensitivity * .05f;
         currentZoom = Mathf.Clamp01(currentZoom);
