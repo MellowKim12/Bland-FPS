@@ -77,6 +77,7 @@ public class PlayerMove : NetworkBehaviour
         networkContainer = GameObject.FindGameObjectWithTag("respawnAnchor");
         networkContainer.GetComponent<NetworkManagerUI>().playerList.Add(this.gameObject);
         Debug.Log(this.gameObject.GetInstanceID());
+        Cursor.lockState = CursorLockMode.Locked;
         UpdatePositionServerRpc();
         
     }

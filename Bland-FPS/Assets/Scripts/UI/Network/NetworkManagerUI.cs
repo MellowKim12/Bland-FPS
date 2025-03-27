@@ -34,15 +34,11 @@ public class NetworkManagerUI : MonoBehaviour
 
     private void Awake()
     {
-        serverBtn.onClick.AddListener(() =>
-        {
-            NetworkManager.Singleton.StartServer();
-        }); 
-
         hostBtn.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartHost();
             gameStart = true;
+            DisableButtons();
             //spawnManager.GetComponent<SpawnManager>().AssignTeam(player);
             // on start host we need to load a network and load the scene into the game
         });
@@ -51,6 +47,7 @@ public class NetworkManagerUI : MonoBehaviour
         { 
             gameStart = true;
             NetworkManager.Singleton.StartClient();
+            DisableButtons();
             //spawnManager.GetComponent<SpawnManager>().AssignTeam(player);
         });
 
@@ -67,6 +64,7 @@ public class NetworkManagerUI : MonoBehaviour
                     if (clientPlayer.GetComponent<NetworkObject>().OwnerClientId == NetworkManager.Singleton.LocalClientId)
                     {
                         Debug.Log("Found player, respawning now");
+                        spawnBtn.gameObject.SetActive(false);
                         // send the clientID rather than object reference
                         clientPlayer.gameObject.GetComponent<PlayerMove>().RespawnRpc(clientPlayer.GetComponent<NetworkObject>().OwnerClientId);   // THIS NEEDS TO BE A RPC TO REFLECT ON SERVER AND CLIENT SIDE
                     }
@@ -90,6 +88,17 @@ public class NetworkManagerUI : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
     }
 
+    // helper function, disables all buttons
+    private void DisableButtons()
+    {
+        serverBtn.gameObject.SetActive(false);
+        clientBtn.gameObject.SetActive(false);
+        spawnBtn.gameObject.SetActive(false);
+        hostBtn.gameObject.SetActive(false);
+    }
 
-
+    public void ActivateRespawn()
+    {
+        spawnBtn.gameObject.SetActive(true); 
+    }
 }
