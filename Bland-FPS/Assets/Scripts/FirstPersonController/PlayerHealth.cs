@@ -9,6 +9,12 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField]
     private int health = 1;
 
+    private GameObject uiContainer;
+
+    private void Awake()
+    {
+        uiContainer = GameObject.FindGameObjectWithTag("respawnAnchor");
+    }
 
     public void Damage(int damage)
     {
@@ -23,6 +29,8 @@ public class PlayerHealth : NetworkBehaviour
 
         if (health <= 0)
         {
+            uiContainer.GetComponent<NetworkManagerUI>().ActivateRespawn();
+            Cursor.lockState = CursorLockMode.None;
             DestroyPlayerServerRpc();
         }
     }
