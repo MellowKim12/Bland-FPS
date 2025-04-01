@@ -9,9 +9,6 @@ public class PlayerAction : NetworkBehaviour
     [SerializeField]
     private Shooter shooter;
 
-    [SerializeField]
-    private int hp = 5;
-
     private void Update()
     {
         // netcode band-aid patch
@@ -26,7 +23,6 @@ public class PlayerAction : NetworkBehaviour
         {
             ShootServerRpc();
         }
-
     }
 
     [ServerRpc]
@@ -35,12 +31,4 @@ public class PlayerAction : NetworkBehaviour
         Debug.Log("Shooting");
         shooter.Shoot();
     }
-
-
-
-    public void DealDamage()
-    {
-        this.hp = hp - 1;
-    }
-
 }

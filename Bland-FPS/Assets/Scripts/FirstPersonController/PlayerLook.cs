@@ -43,9 +43,15 @@ public class PlayerLook : NetworkBehaviour
     {
         Debug.Log("meow?");
         if (IsOwner)
+        {
             GetComponent<Camera>().enabled = true;
+            GetComponent<AudioListener>().enabled = true;
+        }
         else
+        {
             GetComponent<Camera>().enabled = false;
+            GetComponent<AudioListener>().enabled = false;
+        }
     }
 
     void Update()
