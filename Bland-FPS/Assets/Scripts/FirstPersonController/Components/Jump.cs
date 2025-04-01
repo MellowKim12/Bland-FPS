@@ -31,7 +31,7 @@ public class Jump : MonoBehaviour
         {
             rb.AddForce(Vector3.up * 100 * jumpStrength);
             Jumped?.Invoke();
-            //animator.SetBool("Jump", true);
+            animator.SetBool("Jump", true);
         }
     }
 }

@@ -13,9 +13,17 @@ public class GroundCheck : MonoBehaviour
 
     public event System.Action Grounded;
 
+    private Animator animator;
+
+
     const float OriginOffset = .001f;
     Vector3 RaycastOrigin => transform.position + Vector3.up * OriginOffset;
     float RaycastDistance => distanceThreshold + OriginOffset;
+
+    private void Awake()
+    {
+        animator = GetComponentInParent<Animator>();
+    }
 
     private void LateUpdate()
     {
@@ -29,6 +37,12 @@ public class GroundCheck : MonoBehaviour
 
         // Update isGrounded
         isGrounded = isGroundedNow;
+        animator.SetBool("FreeFall", isGrounded);
+
+        if (isGrounded)
+        {
+            animator.SetBool("Jump", false);
+        }
     }
 
     private void OnDrawGizmosSelected()

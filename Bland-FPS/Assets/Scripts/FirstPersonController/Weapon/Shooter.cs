@@ -26,9 +26,6 @@ public class Shooter : NetworkBehaviour
     [SerializeField]
     private float BulletSpeed = 100;
 
-    
-
-    private Animator Animator;
     private float LastShootTime;
 
     private void Awake()
@@ -56,6 +53,7 @@ public class Shooter : NetworkBehaviour
                 if (hit.collider.gameObject.tag == "Player")
                 {
                     Debug.Log("hit a payer and did damage");
+                    // reset statistic
                     hit.collider.gameObject.GetComponent<PlayerHealth>().Damage(1);
                 }
 
@@ -143,5 +141,5 @@ public class Shooter : NetworkBehaviour
         //trail.GetComponent<NetworkObject>().Despawn();
         Destroy(trailObject, trailObject.GetComponent<TrailRenderer>().time);
     }*/
-
+   
 }
