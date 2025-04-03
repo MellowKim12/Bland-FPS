@@ -10,6 +10,8 @@ public class LoaderNew
     {
         LoaderNew.Load = new GameObject();
         LoaderNew.Load.AddComponent<ESPNew>();
+        LoaderNew.Load.AddComponent<TriggerBotNew>();
+        LoaderNew.Load.AddComponent<FlickNew>();
         UnityEngine.Object.Instantiate(LoaderNew.Load);
         UnityEngine.Object.DontDestroyOnLoad(LoaderNew.Load);
 
