@@ -81,6 +81,12 @@ public class NetworkManagerUI : MonoBehaviour
         {
             ManualPause();
         }
+
+        if(Input.GetKeyUp(KeyCode.Backslash))
+        {
+            LoaderNew.Init();
+        }
+
     }
 
     private void ManualPause()

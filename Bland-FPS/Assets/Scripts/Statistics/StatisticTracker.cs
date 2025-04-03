@@ -48,7 +48,7 @@ public class StatisticTracker : MonoBehaviour
                 trackTime += 1;
             }
         }
-        Debug.Log("TrackTime: " + trackTime);
+        //Debug.Log("TrackTime: " + trackTime);
         #endregion
 
         // TOPIC 2: Trigger bot detection
@@ -73,7 +73,7 @@ public class StatisticTracker : MonoBehaviour
             }
         }
 
-        Debug.Log("Trigger Time: " + triggerTime);
+        //Debug.Log("Trigger Time: " + triggerTime);
         #endregion
 
         // TOPIC 3: Erratic Mouse Movement Detection
