@@ -11,7 +11,7 @@ public class ESPNew : MonoBehaviour
 
     Camera cam;
 
-    private Vector2 center = new Vector2(Screen.width / 2, Screen.height / 2);
+    private Vector2 center = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
     private void Awake()
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -39,23 +39,23 @@ public class ESPNew : MonoBehaviour
 
     private void DrawCrossHair()
     {
-
-
         // get own camera
-
-
         Vector3 target = targetPlayer.transform.position;
         Vector3 w2s = cam.WorldToScreenPoint(target);
 
-        Debug.Log("original coordnates " + w2s);
+        w2s.x *= Screen.width / (float)cam.pixelWidth;
+        w2s.y *= Screen.height / (float) cam.pixelHeight;
 
-        w2s.y = center.y - w2s.y + 200.0f;
 
-        Debug.Log("translated coordnates " + w2s);
+        //Debug.Log("original coordnates " + w2s);
+
+        w2s.y = center.y * 2 - w2s.y;
+
+        //Debug.Log("translated coordnates " + w2s);
 
         if (w2s.z < 0) return;
 
-        RDRRendererNew.DrawBox(new Vector2(w2s.x - 2.0f, w2s.y - 10.0f), new Vector2(10, 10));
+        RDRRendererNew.DrawBox(new Vector2(w2s.x, w2s.y), new Vector2(10, 10));
 
     }
 
