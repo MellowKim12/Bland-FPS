@@ -28,37 +28,39 @@ public class FlickNew : MonoBehaviour
 
     private void Update()
     {
-        object[] targets = { targetPlayer };
-        Aimbot(targets, targetPlayer.GetComponentInChildren<Camera>().transform.position, ownPlayer.GetComponentInChildren<Camera>(), 1.0);
+        if (Input.GetKey(KeyCode.R))
+        {
+            Aimbot(targetPlayer, targetPlayer.GetComponentInChildren<Camera>().transform.position, ownPlayer.GetComponentInChildren<Camera>(), 1.0);
+        }
     }
 
-    public static void Aimbot<T>(IEnumerable<T> targets, Vector3 headPos, Camera localPlayerCam, double mouseSmoothing)
+    public static void Aimbot(GameObject target, Vector3 headPos, Camera localPlayerCam, double mouseSmoothing)
     {
         try
         {
             float closestTargetDistance = float.MaxValue;
             Vector2 closestTargetScreenPosition = Vector2.zero;
 
-            foreach (T target in targets)
+
+            Vector3 headPosition = target.GetComponentInChildren<Camera>().transform.position;
+            Debug.Log("Target position to flick to: " + headPosition);
+
+            Vector3 targetScreenPosition = localPlayerCam.WorldToScreenPoint(headPosition);
+
+            if(targetScreenPosition.z > -8)
             {
-                Vector3 headPosition = headPos;
+                Vector2 centerScreenPosition = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
+                float distancecToCenter = Vector2.Distance(new Vector2(targetScreenPosition.x, Screen.height - targetScreenPosition.y), centerScreenPosition);
 
-                Vector3 targetScreenPosition = localPlayerCam.WorldToScreenPoint(headPosition);
+                float fieldOfViewRadius = 300f;
 
-                if(targetScreenPosition.z > -8)
+                if (distancecToCenter < fieldOfViewRadius && distancecToCenter < closestTargetDistance)
                 {
-                    Vector2 centerScreenPosition = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
-                    float distancecToCenter = Vector2.Distance(new Vector2(targetScreenPosition.x, Screen.height - targetScreenPosition.y), centerScreenPosition);
-
-                    float fieldOfViewRadius = 300f;
-
-                    if (distancecToCenter < fieldOfViewRadius && distancecToCenter < closestTargetDistance)
-                    {
-                        closestTargetDistance = distancecToCenter;
-                        closestTargetScreenPosition = new Vector2(targetScreenPosition.x, Screen.height - targetScreenPosition.y);
-                    }
+                    closestTargetDistance = distancecToCenter;
+                    closestTargetScreenPosition = new Vector2(targetScreenPosition.x, Screen.height - targetScreenPosition.y);
                 }
             }
+            
 
             if (closestTargetScreenPosition != Vector2.zero)
             {
@@ -68,10 +70,12 @@ public class FlickNew : MonoBehaviour
                 distanceToMoveX /= mouseSmoothing;
                 distanceToMoveY /= mouseSmoothing;
 
-                if (Input.GetKeyDown(KeyCode.E))
-                {
+                Debug.Log("Distances to move " + distanceToMoveX + " " + distanceToMoveY);
+
+                //if (Input.GetKeyDown(KeyCode.E))
+                //{
                     WindowCalls.mouse_event(0x0001, (int)distanceToMoveX, (int)distanceToMoveY, 0, 0);
-                }
+                //}
             }
 
 

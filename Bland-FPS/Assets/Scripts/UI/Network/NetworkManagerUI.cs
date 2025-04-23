@@ -6,6 +6,8 @@ using Unity.Netcode;
 using UnityEditor.Rendering;
 using System.Linq;
 using TMPro;
+using System.Net;
+using Unity.Netcode.Transports.UTP;
 
 public class NetworkManagerUI : MonoBehaviour
 {
@@ -17,7 +19,16 @@ public class NetworkManagerUI : MonoBehaviour
     private Button clientBtn;
     [SerializeField]
     private Button spawnBtn;
-   
+    [SerializeField]
+    private Button ipBtn;
+
+    [SerializeField]
+    private TMP_InputField ipField;
+
+    [SerializeField]
+    private TMP_Text ipText;
+
+    private string targetIp;
 
     [SerializeField]
     private GameObject player;
@@ -38,6 +49,7 @@ public class NetworkManagerUI : MonoBehaviour
         {
             NetworkManager.Singleton.StartHost();
             gameStart = true;
+            GetLocalIPAddress();
             DisableButtons();
             //spawnManager.GetComponent<SpawnManager>().AssignTeam(player);
             // on start host we need to load a network and load the scene into the game
@@ -46,6 +58,7 @@ public class NetworkManagerUI : MonoBehaviour
         clientBtn.onClick.AddListener(() =>
         { 
             gameStart = true;
+            SetIPAddress();
             NetworkManager.Singleton.StartClient();
             DisableButtons();
             //spawnManager.GetComponent<SpawnManager>().AssignTeam(player);
@@ -73,6 +86,12 @@ public class NetworkManagerUI : MonoBehaviour
                 }
             }
         });
+
+        ipBtn.onClick.AddListener(() =>
+        {
+            targetIp = ipField.text;
+        });
+
     }
 
     private void Update()
@@ -107,4 +126,27 @@ public class NetworkManagerUI : MonoBehaviour
     {
         spawnBtn.gameObject.SetActive(true); 
     }
+
+    private string GetLocalIPAddress()
+    {
+        var host = Dns.GetHostEntry(Dns.GetHostName());
+        foreach (var ip in host.AddressList)
+        {
+            if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            {
+                ipText.text = ip.ToString();
+                targetIp = ip.ToString();
+                return ip.ToString();
+            }
+        }
+        throw new System.Exception("No Network Adapters with an IPv4 address");
+    }
+
+    private void SetIPAddress()
+    {
+        UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
+        transport.ConnectionData.Address = targetIp;
+    }
+
+
 }
